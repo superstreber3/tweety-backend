@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// lib/app.tsnode build/app.js
 var express = require("express");
-// Create a new express application instance
-var app = express();
-app.get('/', function (req, res) {
-    res.send('Hello World!');
-});
+var app;
+app = express();
+exports.default = app;
+console.log("Starting User API...");
+require('./ApiFunction/UserApi');
 app.listen(3000, function () {
-    console.log('Example app listening on port 3000!');
+    console.log("API started succsesfully");
 });
