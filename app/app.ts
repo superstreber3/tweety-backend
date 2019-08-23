@@ -1,13 +1,11 @@
-// lib/app.tsnode build/app.js
 import express = require('express');
-
-// Create a new express application instance
-const app: express.Application = express();
-
-app.get('/', function (req, res) {
-  res.send('Hello World!');
-});
-
+var app: express.Application;
+app = express();
+export default app;
+console.log("Starting User API...");
+require('./ApiFunction/UserApi');
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
+    console.log("API started succsesfully");
+  });
+
+ 
