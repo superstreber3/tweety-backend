@@ -12,12 +12,14 @@ app.post('/createUser', function (req, res) {
     req.body.password
   );
   if(UserLogic.isUserNotNull(user)){
-  UserLogic.validateUser(user)
+  if(UserLogic.validateUser(user)){
+    //UserLogic.writeUserToDb(user);
+  }
   res.send(UserLogic.createUser(user));
   }
 });
 
 app.get('/getUser', function (req, res) {
-send(UserLogic.createUser(user));
+//send(UserLogic.createUser(user));
 });
 console.log("Done");

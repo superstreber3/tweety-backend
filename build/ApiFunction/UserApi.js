@@ -9,10 +9,14 @@ var UserLogic_1 = require("../Logic/UserLogic");
 app_1.default.post('/createUser', function (req, res) {
     //Parse User
     var user = new User(req.body.firstname, req.body.lastname, req.body.username, req.body.email, req.body.password);
-    UserLogic_1.UserLogic.validateUser(user);
-    res.send(UserLogic_1.UserLogic.createUser(user));
+    if (UserLogic_1.UserLogic.isUserNotNull(user)) {
+        if (UserLogic_1.UserLogic.validateUser(user)) {
+            //UserLogic.writeUserToDb(user);
+        }
+        res.send(UserLogic_1.UserLogic.createUser(user));
+    }
 });
 app_1.default.get('/getUser', function (req, res) {
-    send(UserLogic_1.UserLogic.createUser(user));
+    //send(UserLogic.createUser(user));
 });
 console.log("Done");
