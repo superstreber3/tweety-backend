@@ -1,5 +1,5 @@
-enum ResponseEnum {
-    Success,
-    Warning,
-    Error,
+export enum ResponseEnum {
+    Success = "Success",
+    Warning = "Warning",
+    Error = "Error",
 }

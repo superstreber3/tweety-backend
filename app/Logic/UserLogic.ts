@@ -1,23 +1,12 @@
 import * as EmailValidator from 'email-validator';
-import { MongoHelper } from './DatabaseLogic';
+import { DatabseLogic } from './DatabaseLogic';
+import { ResponseEnum } from '../Enum/ResponseEnum';
+import { User } from '../Object/UserObj';
+import { ResponseObj } from '../Object/ResponseObj'
+import { InvalidMail, ShortUsername, InvalidUsername, InvalidPassword } from '../Messages/UserLogicMessages'
+import { usernameRegex, passwordRegex } from './Regex';
 
 export class UserLogic {
-     static createUser(user: User) {
-
-     };
-     static isUserNotNull(user: User) {
-          if (user.email != undefined)
-               return this.responseMsgBuilder(ResponseEnum.Error, NoMail);
-          if (user.firstName != undefined)
-               return this.responseMsgBuilder(ResponseEnum.Error, NoFirstname);
-          if (user.lastName != undefined)
-               return this.responseMsgBuilder(ResponseEnum.Error, NoLastname);
-          if (user.userName != undefined)
-               return this.responseMsgBuilder(ResponseEnum.Error, NoUsername);
-          if (user.password != undefined)
-               return this.responseMsgBuilder(ResponseEnum.Error, NoPassword);
-          return true;
-     }
      static validateUser(user: User) {
           if (!EmailValidator.validate(user.email))
                return this.responseMsgBuilder(ResponseEnum.Error, InvalidMail);
@@ -25,14 +14,15 @@ export class UserLogic {
                return this.responseMsgBuilder(ResponseEnum.Error, ShortUsername)
           if (user.userName.match(usernameRegex))
                return this.responseMsgBuilder(ResponseEnum.Error, InvalidUsername)
-          if (user.password != undefined && user.password.match(passwordRegex))
+          if (!user.password.match(passwordRegex))
                return this.responseMsgBuilder(ResponseEnum.Error, InvalidPassword)
           return true;
      };
 
-      static writeUserToDb() {
-               console.log(MongoHelper.client.db('Tweety').collection('Users'));
-           
+     async writeUserToDb(user: User, callback: any) {
+          DatabseLogic.writeToDB(user, function() {
+            callback();   
+          })
      }
      static responseMsgBuilder(type: ResponseEnum, message: string) {
           return new ResponseObj(type, message);

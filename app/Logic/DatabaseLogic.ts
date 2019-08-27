@@ -1,25 +1,19 @@
-import * as mongo from 'mongodb';
- 
-export class MongoHelper {
-  public static client: mongo.MongoClient;
- 
-  constructor() {
-  }
- 
-  public static connect(): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      mongo.MongoClient.connect("localhost:27017/Tweety", {useNewUrlParser: true}, (err, client: mongo.MongoClient) => {
-        if (err) {
-          reject(err);
-        } else {
-          MongoHelper.client = client;
-          resolve(client);
-        }
-      });
+import * as MongoClient from 'mongodb';
+import * as assert from 'assert';
+const url = "mongodb://localhost:27017/Tweety";
+export class DatabseLogic {
+  static writeToDB(user: any, callback: any) {
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+      assert.equal(null, err);
+      const collection = client.db().collection('Users');
+      collection.insertOne(user, function (err, res) {
+        if (err) throw err;
+        client.close();
+      })
+
     });
-  }
- 
-  public disconnect(): void {
-    MongoHelper.client.close();
+    callback();
   }
 }
+
+
