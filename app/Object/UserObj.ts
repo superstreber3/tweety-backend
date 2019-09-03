@@ -10,8 +10,8 @@ export class User implements userInterface {
   this.firstName = firstName.trim();
   this.lastName = lastName.trim();
   this.userName = userName.trim();
-  this.email = email.trim();
-  this.password = password.trim();
+  this.email = email.trim().toLowerCase();
+  this.password = password
   this.admin = admin
  }
 }

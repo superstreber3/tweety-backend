@@ -3,7 +3,7 @@ import app from '../app';
 import { UserLogic } from '../Logic/UserLogic';
 import { User } from '../Object/UserObj';
 import { ResponseEnum } from '../Enum/ResponseEnum';
-import { UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPassword, NotAvailableUsername, SuccessfullyCreated, AvailableUsername } from '../Messages/UserLogicMessages';
+import { UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPassword, NotAvailableUsername, SuccessfullyCreated, AvailableUsername, AvailableEmail, NotAvailableEmail } from '../Messages/UserLogicMessages';
 // Create a new express application instance
 const pwd = new securePassword();
 app.post('/createUser', function (req, res) {
@@ -59,7 +59,7 @@ app.post('/createUser', function (req, res) {
 });
 
 app.get('/checkUsername', function (req, res) {
-  var username = req.query.username;
+  var username = req.query.username.trim().toLowerCase();
   if (username == undefined) {
     res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
@@ -82,7 +82,26 @@ app.get('/checkUsername', function (req, res) {
 
 });
 app.get('/checkEmail', function (req, res) {
-  //send(UserLogic.createUser(user));
+  var email = req.query.email.trim().toLowerCase();
+  if (email == undefined) {
+    res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoMail));
+    return;
+  }
+  var validateEmail = UserLogic.validateEmail(email);
+  if (validateEmail != true) {
+    res.send(validateEmail);
+    return;
+  } else {
+    const ul = new UserLogic();
+    ul.readFromDb({ email: email }, function (value: any) {
+      if (value == null) {
+        res.send(UserLogic.responseMsgBuilder(ResponseEnum.Success, AvailableEmail));
+        return;
+      }
+      res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, NotAvailableEmail));
+      return;
+    });
+  }
 });
 app.get('/getUser', function (req, res) {
   //send(UserLogic.createUser(user));

@@ -11,5 +11,7 @@ export const UnexpectedError = "There was an unexpected error";
 export const SuccessfullyCreated = "User successfully created!";
 export const NotAvailableUsername = "This Username is already taken!";
 export const AvailableUsername = "This Username is available";
+export const NotAvailableEmail = "This Email is already in use!";
+export const AvailableEmail = "This Email is available";
 
 
