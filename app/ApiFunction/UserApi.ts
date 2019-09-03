@@ -1,10 +1,11 @@
+import securePassword from 'secure-password';
 import app from '../app';
 import { UserLogic } from '../Logic/UserLogic';
 import { User } from '../Object/UserObj';
 import { ResponseEnum } from '../Enum/ResponseEnum';
-import {UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPassword} from '../Messages/UserLogicMessages';
+import {UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPassword, SuccessfullyCreated} from '../Messages/UserLogicMessages';
 // Create a new express application instance
-
+const pwd = new securePassword();
 app.post('/createUser', function (req, res) {
 if(req.body == undefined){
   res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
@@ -36,14 +37,22 @@ if(req.body == undefined){
     req.body.lastname,
     req.body.username,
     req.body.email,
-    req.body.password
+    req.body.password,
+    false
   );
   var validate = UserLogic.validateUser(user);
   if (validate == true) {
+    pwd.hash(Buffer.from(user.password), function (err, hash) {
+      if (err || hash == null){
+        res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
+        return;
+      }
+    user.password = hash.toString();
       const ul = new UserLogic()
       ul.writeUserToDb(user, function(){
-        res.send(ResponseEnum.Success, )
+        res.send(UserLogic.responseMsgBuilder(ResponseEnum.Success, SuccessfullyCreated))
       });
+    });
   } else {
     res.send(validate);
   }
