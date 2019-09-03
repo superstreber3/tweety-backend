@@ -2,14 +2,14 @@ import app from '../app';
 import { UserLogic } from '../Logic/UserLogic';
 import { User } from '../Object/UserObj';
 import { ResponseEnum } from '../Enum/ResponseEnum';
-import {UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPassword} from '../Messages/UserLogicMessages';
+import { UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPassword, InvalidUsername, NotAvailableUsername, SuccessfullyCreated, AvailableUsername } from '../Messages/UserLogicMessages';
 // Create a new express application instance
 
 app.post('/createUser', function (req, res) {
-if(req.body == undefined){
-  res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
-  return
-}
+  if (req.body == undefined) {
+    res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
+    return
+  }
   if (req.body.firstname == undefined) {
     res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoFirstname));
     return
@@ -40,15 +40,42 @@ if(req.body == undefined){
   );
   var validate = UserLogic.validateUser(user);
   if (validate == true) {
-      const ul = new UserLogic()
-      ul.writeUserToDb(user, function(){
-        res.send(ResponseEnum.Success, )
-      });
+    const ul = new UserLogic();
+    ul.writeUserToDb(user, function () {
+      res.send(UserLogic.responseMsgBuilder(ResponseEnum.Success, SuccessfullyCreated));
+      return
+    });
   } else {
     res.send(validate);
   }
 });
 
+app.get('/checkUsername', function (req, res) {
+  var username = req.query.username;
+  if (username == undefined) {
+    res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
+    return;
+  }
+  var validateUsername = UserLogic.validateUsername(username);
+  if (validateUsername != true) {
+    res.send(validateUsername);
+    return;
+  } else {
+    const ul = new UserLogic();
+    ul.readFromDb({ userName: username }, function (value: any) {
+      if (value == null) {
+        res.send(UserLogic.responseMsgBuilder(ResponseEnum.Success, AvailableUsername));
+        return;
+      }
+      res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, NotAvailableUsername));
+      return;
+    });
+  }
+
+});
+app.get('/checkEmail', function (req, res) {
+  //send(UserLogic.createUser(user));
+});
 app.get('/getUser', function (req, res) {
   //send(UserLogic.createUser(user));
 });

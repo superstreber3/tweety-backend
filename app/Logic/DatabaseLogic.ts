@@ -14,6 +14,18 @@ export class DatabseLogic {
     });
     callback();
   }
+  static readFromDB(search: Object, callback: any) {
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+      assert.equal(null, err);
+      const collection = client.db().collection('Users')
+      collection.findOne(search, function (err, res) {
+        if (err) throw err;    
+        client.close();
+        callback(res);
+      })
+
+    });
+  }
 }
 
 
