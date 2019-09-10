@@ -13,5 +13,9 @@ export const NotAvailableUsername = "This Username is already taken!";
 export const AvailableUsername = "This Username is available";
 export const NotAvailableEmail = "This Email is already in use!";
 export const AvailableEmail = "This Email is available";
+export const NoUserFound = "User could not be found";
+export const NoUsernameOrMail = "The Field Username or Email must be filled out";
+export const WrongHash = "The Field Username or Email must be filled out";
+
 
 

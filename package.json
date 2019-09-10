@@ -33,6 +33,7 @@
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "mongodb": "^3.3.1",
+    "nodejs-base64": "^1.0.3",
     "reflect-metadata": "^0.1.12",
     "secure-password": "^3.1.0",
     "ts-node-dev": "^1.0.0-pre.41",
