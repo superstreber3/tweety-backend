@@ -7,7 +7,7 @@ import { UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPasswor
 const { base64decode } = require('nodejs-base64');
 // Create a new express application instance
 const pwd = new securePassword();
-app.post('/createUser', function (req, res) {
+app.post('createUser', function (req, res) {
   if (req.body == undefined) {
     res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
     return
@@ -109,7 +109,7 @@ app.get('/getUser', function (req, res) {
   }
 });
 
-app.get('/login', function (req, res) {
+app.get('/login', function (req: any, res) {
   var username = req.query.username;
   var password = base64decode(req.query.password);
   var email = req.query.email;
@@ -143,12 +143,22 @@ app.get('/login', function (req, res) {
   } else {
     const ul = new UserLogic();
     ul.validatePasswordMatch(password, pwMail, function (value: any) {
+      if(value["type"] == ResponseEnum.Success){
+        req.session.user = value["message"]["_id"];
+        delete value["message"]["password"];
       res.send(value);
+      }else{
+          res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+      }
       return;
     });
   }
 });
+app.get('/loggedin', function (req: any, res) {
+  if(req.session != undefined){
 
+  }
+});
 function checkEmail(email: string, callback: any) {
   if (email == undefined) {
     callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoMail));
