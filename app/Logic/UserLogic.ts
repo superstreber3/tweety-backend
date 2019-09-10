@@ -4,7 +4,7 @@ import { ResponseEnum } from '../Enum/ResponseEnum';
 import { User } from '../Object/UserObj';
 import { ResponseObj } from '../Object/ResponseObj'
 import { InvalidMail, ShortUsername, InvalidUsername, InvalidPassword, WrongHash } from '../Messages/UserLogicMessages'
-import { usernameRegex, passwordRegex } from './Regex';
+import { usernameRegex, passwordRegex } from './regex';
 import { unwatchFile } from 'fs';
 import securePassword from 'secure-password';
 const pwd = new securePassword();
@@ -35,7 +35,11 @@ export class UserLogic {
                          callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
                     } else {
                          UserLogic.verfiyPw(valueE["password"], pw, function (value2E: any) {
-                              callback(value2E);
+                              if(value2E){
+                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, valueE))
+                              }else{
+                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+                              }
                          });
                     }
                });
@@ -46,7 +50,11 @@ export class UserLogic {
                          callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
                     } else {
                          UserLogic.verfiyPw(valueU["password"], pw, function (value2U: any) {
-                              callback(value2U);
+                              if(value2U){
+                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, valueU))
+                              }else{
+                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+                              }
                          });
                     }
                });
@@ -82,17 +90,17 @@ export class UserLogic {
                if (err) throw err
                switch (result) {
                     case securePassword.INVALID_UNRECOGNIZED_HASH:
-                         callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, WrongHash));
+                         callback(false);
                          break;
                     case securePassword.INVALID:
                          console.log(pw);
-                         callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"));
+                         callback(false);
                          break;
                     case securePassword.VALID:
-                         callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, "true"));
+                         callback(true);
                          break;
                     case securePassword.VALID_NEEDS_REHASH:
-                         callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, "true"));
+                         callback(true);
                          break;
                }
           });
