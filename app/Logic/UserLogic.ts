@@ -1,11 +1,30 @@
 import * as EmailValidator from 'email-validator';
-import { DatabseLogic } from './DatabaseLogic';
-import { ResponseEnum } from '../Enum/ResponseEnum';
-import { User } from '../Object/UserObj';
-import { ResponseObj } from '../Object/ResponseObj'
-import { InvalidMail, ShortUsername, InvalidUsername, InvalidPassword, WrongHash } from '../Messages/UserLogicMessages'
-import { usernameRegex, passwordRegex } from './regex';
-import { unwatchFile } from 'fs';
+import {
+     DatabseLogic
+} from './DatabaseLogic';
+import {
+     ResponseEnum
+} from '../Enum/ResponseEnum';
+import {
+     User
+} from '../Object/UserObj';
+import {
+     ResponseObj
+} from '../Object/ResponseObj'
+import {
+     InvalidMail,
+     ShortUsername,
+     InvalidUsername,
+     InvalidPassword,
+     WrongHash
+} from '../Messages/UserLogicMessages'
+import {
+     usernameRegex,
+     passwordRegex
+} from './regex';
+import {
+     unwatchFile
+} from 'fs';
 import securePassword from 'secure-password';
 const pwd = new securePassword();
 
@@ -30,29 +49,37 @@ export class UserLogic {
      }
      async validatePasswordMatch(pw: string, searchValue: string, callback: any) {
           if (searchValue.includes("@")) {
-               this.readFromDb({ email: { $regex : new RegExp(searchValue, "i") } }, function (valueE: any) {
+               this.readFromDb({
+                    email: {
+                         $regex: new RegExp(searchValue, "i")
+                    }
+               }, function (valueE: any) {
                     if (valueE == null) {
                          callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
                     } else {
                          UserLogic.verfiyPw(valueE["password"], pw, function (value2E: any) {
-                              if(value2E){
+                              if (value2E) {
                                    callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, valueE))
-                              }else{
+                              } else {
                                    callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
                               }
                          });
                     }
                });
           } else {
-               this.readFromDb({ userName: { $regex : new RegExp(searchValue, "i") } }, function (valueU: any) {
+               this.readFromDb({
+                    userName: {
+                         $regex: new RegExp(searchValue, "i")
+                    }
+               }, function (valueU: any) {
                     if (valueU == null) {
                          console.log(1);
                          callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
                     } else {
                          UserLogic.verfiyPw(valueU["password"], pw, function (value2U: any) {
-                              if(value2U){
+                              if (value2U) {
                                    callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, valueU))
-                              }else{
+                              } else {
                                    callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
                               }
                          });

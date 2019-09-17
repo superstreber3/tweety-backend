@@ -1,10 +1,32 @@
 import securePassword from 'secure-password';
 import app from '../app';
-import { UserLogic } from '../Logic/UserLogic';
-import { User } from '../Object/UserObj';
-import { ResponseEnum } from '../Enum/ResponseEnum';
-import { UnexpectedError, NoMail, NoFirstname, NoLastname, NoUsername, NoPassword, NotAvailableUsername, SuccessfullyCreated, AvailableUsername, AvailableEmail, NotAvailableEmail, NoUserFound, NoUsernameOrMail } from '../Messages/UserLogicMessages';
-const { base64decode } = require('nodejs-base64');
+import {
+  UserLogic
+} from '../Logic/UserLogic';
+import {
+  User
+} from '../Object/UserObj';
+import {
+  ResponseEnum
+} from '../Enum/ResponseEnum';
+import {
+  UnexpectedError,
+  NoMail,
+  NoFirstname,
+  NoLastname,
+  NoUsername,
+  NoPassword,
+  NotAvailableUsername,
+  SuccessfullyCreated,
+  AvailableUsername,
+  AvailableEmail,
+  NotAvailableEmail,
+  NoUserFound,
+  NoUsernameOrMail
+} from '../Messages/UserLogicMessages';
+const {
+  base64decode
+} = require('nodejs-base64');
 // Create a new express application instance
 const pwd = new securePassword();
 app.post('createUser', function (req, res) {
@@ -98,7 +120,11 @@ app.get('/getUser', function (req, res) {
     return;
   } else {
     const ul = new UserLogic();
-    ul.readFromDb({ userName: { $regex : new RegExp(username, "i") } }, function (value: any) {
+    ul.readFromDb({
+      userName: {
+        $regex: new RegExp(username, "i")
+      }
+    }, function (value: any) {
       if (value == null) {
         res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
         return;
@@ -143,22 +169,27 @@ app.get('/login', function (req: any, res) {
   } else {
     const ul = new UserLogic();
     ul.validatePasswordMatch(password, pwMail, function (value: any) {
-      if(value["type"] == ResponseEnum.Success){
+      if (value["type"] == ResponseEnum.Success) {
         req.session.user = value["message"]["_id"];
         delete value["message"]["password"];
-      res.send(value);
-      }else{
-          res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+        res.send(value);
+      } else {
+        res.send(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
       }
       return;
     });
   }
 });
 app.get('/loggedin', function (req: any, res) {
-  if(req.session != undefined){
-
+  if (req.session != undefined) {
+        if(req.session.user != undefined){
+          res.send(UserLogic.responseMsgBuilder(ResponseEnum.Success, req.session.user));
+        }else{
+          res.send(false);
+        }
   }
 });
+
 function checkEmail(email: string, callback: any) {
   if (email == undefined) {
     callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoMail));
@@ -171,7 +202,11 @@ function checkEmail(email: string, callback: any) {
     return;
   } else {
     const ul = new UserLogic();
-    ul.readFromDb({ email: { $regex : new RegExp(email, "i") } }, function (value: any) {
+    ul.readFromDb({
+      email: {
+        $regex: new RegExp(email, "i")
+      }
+    }, function (value: any) {
       if (value == null) {
         callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, AvailableEmail));
         return;
@@ -181,6 +216,7 @@ function checkEmail(email: string, callback: any) {
     });
   }
 }
+
 function checkUsername(username: string, callback: any) {
   if (username == undefined) {
     callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
@@ -193,7 +229,11 @@ function checkUsername(username: string, callback: any) {
     return;
   } else {
     const ul = new UserLogic();
-    ul.readFromDb({ userName: { $regex : new RegExp(username, "i") } }, function (value: any) {
+    ul.readFromDb({
+      userName: {
+        $regex: new RegExp(username, "i")
+      }
+    }, function (value: any) {
       if (value == null) {
         callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, AvailableUsername));
         return;
