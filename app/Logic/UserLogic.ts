@@ -9,23 +9,17 @@ import {
      User
 } from '../Object/UserObj';
 import {
-     ResponseObj
-} from '../Object/ResponseObj'
-import {
      InvalidMail,
      ShortUsername,
      InvalidUsername,
      InvalidPassword,
-     WrongHash
 } from '../Messages/UserLogicMessages'
 import {
      usernameRegex,
      passwordRegex
 } from './regex';
-import {
-     unwatchFile
-} from 'fs';
 import securePassword from 'secure-password';
+import { Logic } from './Logic';
 const pwd = new securePassword();
 
 export class UserLogic {
@@ -44,7 +38,7 @@ export class UserLogic {
      };
      static validatePassword(email: string) {
           if (!email.match(passwordRegex))
-               return this.responseMsgBuilder(ResponseEnum.Error, InvalidPassword)
+               return Logic.responseMsgBuilder(ResponseEnum.Error, InvalidPassword)
           return true;
      }
      async validatePasswordMatch(pw: string, searchValue: string, callback: any) {
@@ -55,13 +49,13 @@ export class UserLogic {
                     }
                }, function (valueE: any) {
                     if (valueE == null) {
-                         callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+                         callback(Logic.responseMsgBuilder(ResponseEnum.Error, "false"))
                     } else {
                          UserLogic.verfiyPw(valueE["password"], pw, function (value2E: any) {
                               if (value2E) {
-                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, valueE))
+                                   callback(Logic.responseMsgBuilder(ResponseEnum.Success, valueE))
                               } else {
-                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+                                   callback(Logic.responseMsgBuilder(ResponseEnum.Error, "false"))
                               }
                          });
                     }
@@ -74,13 +68,13 @@ export class UserLogic {
                }, function (valueU: any) {
                     if (valueU == null) {
                          console.log(1);
-                         callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+                         callback(Logic.responseMsgBuilder(ResponseEnum.Error, "false"))
                     } else {
                          UserLogic.verfiyPw(valueU["password"], pw, function (value2U: any) {
                               if (value2U) {
-                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Success, valueU))
+                                   callback(Logic.responseMsgBuilder(ResponseEnum.Success, valueU))
                               } else {
-                                   callback(UserLogic.responseMsgBuilder(ResponseEnum.Error, "false"))
+                                   callback(Logic.responseMsgBuilder(ResponseEnum.Error, "false"))
                               }
                          });
                     }
@@ -89,14 +83,14 @@ export class UserLogic {
      }
      static validateUsername(username: string) {
           if (username.length < 5)
-               return this.responseMsgBuilder(ResponseEnum.Error, ShortUsername)
+               return Logic.responseMsgBuilder(ResponseEnum.Error, ShortUsername)
           if (username.match(usernameRegex))
-               return this.responseMsgBuilder(ResponseEnum.Error, InvalidUsername)
+               return Logic.responseMsgBuilder(ResponseEnum.Error, InvalidUsername)
           return true;
      }
      static validateEmail(email: string) {
           if (!EmailValidator.validate(email))
-               return this.responseMsgBuilder(ResponseEnum.Error, InvalidMail);
+               return Logic.responseMsgBuilder(ResponseEnum.Error, InvalidMail);
           return true;
      }
      async writeUserToDb(user: User, callback: any) {
@@ -108,9 +102,6 @@ export class UserLogic {
           DatabseLogic.readFromDB(param, function (value: any) {
                callback(value);
           })
-     }
-     static responseMsgBuilder(type: ResponseEnum, message: string) {
-          return new ResponseObj(type, message);
      }
      static verfiyPw(hash: string, pw: string, callback: any) {
           pwd.verify(Buffer.from(pw), Buffer.from(hash), function (err, result) {
