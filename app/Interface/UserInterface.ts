@@ -1,5 +1,5 @@
 
-interface userInterface {
+interface IUserInterface {
     firstName: string;
     lastName: string;
     userName: string;

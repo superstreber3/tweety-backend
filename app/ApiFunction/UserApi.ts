@@ -1,61 +1,55 @@
-import securePassword from 'secure-password';
-import app from '../app';
+import securePassword from "secure-password";
+import app from "../app";
+import { ResponseEnum } from "../Enum/ResponseEnum";
+import { Logic } from "../Logic/Logic";
+import { UserLogic } from "../Logic/UserLogic";
 import {
-  UserLogic
-} from '../Logic/UserLogic';
-import {
-  User
-} from '../Object/UserObj';
-import {
-  ResponseEnum
-} from '../Enum/ResponseEnum';
-import {
-  UnexpectedError,
-  NoMail,
+  AvailableEmail,
+  AvailableUsername,
   NoFirstname,
   NoLastname,
-  NoUsername,
+  NoMail,
   NoPassword,
-  NotAvailableUsername,
-  SuccessfullyCreated,
-  AvailableUsername,
-  AvailableEmail,
   NotAvailableEmail,
+  NotAvailableUsername,
   NoUserFound,
-  NoUsernameOrMail
-} from '../Messages/UserLogicMessages';
-import { Logic } from '../Logic/Logic';
+  NoUsername,
+  NoUsernameOrMail,
+  SuccessfullyCreated,
+  UnexpectedError
+} from "../Messages/UserLogicMessages";
+import { User } from "../Object/UserObj";
 const {
   base64decode
-} = require('nodejs-base64');
-// Create a new express application instance
-const pwd = new securePassword();
-app.post('createUser', function (req, res) {
-  if (req.body == undefined) {
+} = require("nodejs-base64");
+// create a new express application instance
+const pwd: any = new securePassword();
+app.post("createUser", function (req: any, res: any): any {
+  if (req.body === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
-    return
+    return;
   }
-  if (req.body.firstname == undefined) {
+  if (req.body.firstname === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoFirstname));
-    return
+    return;
   }
-  if (req.body.lastname == undefined) {
+  if (req.body.lastname === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoLastname));
-    return
+    return;
   }
-  if (req.body.username == undefined) {
+  if (req.body.username === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
-    return
+    return;
   }
-  if (req.body.email == undefined) {
+  if (req.body.email === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoMail));
-    return
+    return;
   }
-  if (req.body.password == undefined) {
+  if (req.body.password === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
-    return
+    return;
   }
-  var user: userInterface = new User(
+  var user: UserInterface = new User(
 
     req.body.firstname,
     req.body.lastname,
@@ -64,27 +58,27 @@ app.post('createUser', function (req, res) {
     base64decode(req.body.password),
     false
   );
-  var validate = UserLogic.validateUser(user);
-  if (validate == true) {
-    checkUsername(user.userName, function (value: any) {
-      if (value["type"] == ResponseEnum.Error) {
+  var validate: any = UserLogic.validateUser(user);
+  if (validate === true) {
+    checkUsername(user.userName, function (value: any): any {
+      if (value.type === ResponseEnum.Error) {
         res.send(value);
         return;
       } else {
-        checkEmail(user.email, function (value: any) {
-          if (value["type"] == ResponseEnum.Error) {
+        checkEmail(user.email, function (value: any): any {
+          if (value.type === ResponseEnum.Error) {
             res.send(value);
             return;
           } else {
-            pwd.hash(Buffer.from(user.password), function (err, hash) {
+            pwd.hash(Buffer.from(user.password), function (err: any, hash: any): any {
               if (err || hash == null) {
                 res.send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
                 return;
               }
               user.password = hash.toString();
-              const ul = new UserLogic()
-              ul.writeUserToDb(user, function () {
-                res.send(Logic.responseMsgBuilder(ResponseEnum.Success, SuccessfullyCreated))
+              const l: Logic = new Logic();
+              l.writeUserToDb(user, "Users", function (): any {
+                res.send(Logic.responseMsgBuilder(ResponseEnum.Success, SuccessfullyCreated));
               });
             });
           }
@@ -98,42 +92,42 @@ app.post('createUser', function (req, res) {
 
 console.log(" ↳'/createUser' started");
 
-app.get('/checkUsername', function (req, res) {
-  var username = req.query.username
-  checkUsername(username, function (value: any) {
+app.get("/checkUsername", function (req: any, res: any): any {
+  var username: string = req.query.username;
+  checkUsername(username, function (value: any): any {
     res.send(value);
   });
 });
 
 console.log(" ↳'/checkUsername' started");
 
-app.get('/checkEmail', function (req, res) {
-  var email = req.query.email
-  checkEmail(email, function (value: any) {
+app.get("/checkEmail", function (req: any, res: any): any {
+  var email: string = req.query.email;
+  checkEmail(email, function (value: any): any {
     res.send(value);
   });
 });
 
 console.log(" ↳'/checkEmail' started");
 
-app.get('/getUser', function (req, res) {
-  var username = req.query.username;
-  if (username == undefined) {
+app.get("/getUser", function (req: any, res: any): any {
+  var username: string = req.query.username;
+  if (username === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
   }
-  username = username.trim().toLowerCase()
-  var validateUsername = UserLogic.validateUsername(username);
-  if (validateUsername != true) {
+  username = username.trim().toLowerCase();
+  var validateUsername: any = UserLogic.validateUsername(username);
+  if (validateUsername !== true) {
     res.send(validateUsername);
     return;
   } else {
-    const ul = new UserLogic();
-    ul.readFromDb({
+    const l: Logic = new Logic();
+    l.readFromDb({
       userName: {
         $regex: new RegExp(username, "i")
       }
-    }, function (value: any) {
+    }, "Users", function (value: any): any {
       if (value == null) {
         res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
         return;
@@ -146,83 +140,83 @@ app.get('/getUser', function (req, res) {
 
 console.log(" ↳'/getUser' started");
 
-app.get('/login', function (req: any, res) {
-  var username = req.query.username;
-  var password = base64decode(req.query.password);
-  var email = req.query.email;
-  var validateUsername;
-  var validateMail;
-  var pwMail;
-  if (username == undefined && email == undefined) {
+app.get("/login", function (req: any, res: any): any {
+  var username: string = req.query.username;
+  var password: string = base64decode(req.query.password);
+  var email: string = req.query.email;
+  var validateUsername: any;
+  var validateMail: any;
+  var pwMail: any;
+  if (username === undefined && email === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsernameOrMail));
     return;
   }
-  if (password == undefined) {
+  if (password === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
     return;
   }
-  if (username != undefined) {
+  if (username !== undefined) {
     username = username.trim().toLowerCase();
     pwMail = username;
     validateUsername = UserLogic.validateUsername(username);
   }
-  if (email != undefined) {
+  if (email !== undefined) {
     email = email.trim().toLowerCase();
     pwMail = email;
     validateMail = UserLogic.validateEmail(email);
   }
-  if (validateUsername != true && username != undefined) {
+  if (validateUsername !== true && username !== undefined) {
     res.send(validateUsername);
     return;
-  } else if (validateMail != true && email != undefined) {
+  } else if (validateMail !== true && email !== undefined) {
     res.send(validateMail);
     return;
   } else {
-    const ul = new UserLogic();
-    ul.validatePasswordMatch(password, pwMail, function (value: any) {
-      if (value["type"] == ResponseEnum.Success) {
-        req.session.user = value["message"]["_id"];
-        delete value["message"]["password"];
-        res.send(value);
-      } else {
-        res.send(Logic.responseMsgBuilder(ResponseEnum.Error, "false"))
-      }
-      return;
-    });
+    const ul: UserLogic = new UserLogic();
+    ul.validatePasswordMatch(password, pwMail, function (value: any): any {
+              if (value.type === ResponseEnum.Success) {
+                   req.session.user = value.message._id;
+                   delete value.message.password;
+                   res.send(value);
+              } else {
+                   res.send(Logic.responseMsgBuilder(ResponseEnum.Error, "false"));
+              }
+              return;
+         });
   }
 });
 
 console.log(" ↳'/login' started");
 
-app.get('/loggedin', function (req: any, res) {
-  if (req.session != undefined) {
-        if(req.session.user != undefined){
-          res.send(Logic.responseMsgBuilder(ResponseEnum.Success, req.session.user));
-        }else{
-          res.send(false);
-        }
+app.get("/loggedin", function (req: any, res: any): any {
+  if (req.session !== undefined) {
+    if (req.session.user !== undefined) {
+      res.send(Logic.responseMsgBuilder(ResponseEnum.Success, req.session.user));
+    } else {
+      res.send(false);
+    }
   }
 });
 
 console.log(" ↳'/loggedin' started");
 
-function checkEmail(email: string, callback: any) {
-  if (email == undefined) {
+function checkEmail(email: string, callback: any): any {
+  if (email === undefined) {
     callback(Logic.responseMsgBuilder(ResponseEnum.Error, NoMail));
     return;
   }
   email = email.trim().toLowerCase();
-  var validateEmail = UserLogic.validateEmail(email);
-  if (validateEmail != true) {
+  var validateEmail: any = UserLogic.validateEmail(email);
+  if (validateEmail !== true) {
     callback(validateEmail);
     return;
   } else {
-    const ul = new UserLogic();
-    ul.readFromDb({
+    const l: Logic = new Logic();
+    l.readFromDb({
       email: {
         $regex: new RegExp(email, "i")
       }
-    }, function (value: any) {
+    }, "Users", function (value: any): any {
       if (value == null) {
         callback(Logic.responseMsgBuilder(ResponseEnum.Success, AvailableEmail));
         return;
@@ -235,23 +229,23 @@ function checkEmail(email: string, callback: any) {
 
 console.log(" ↳'/checkEmail' started");
 
-function checkUsername(username: string, callback: any) {
-  if (username == undefined) {
+function checkUsername(username: string, callback: any): any {
+  if (username === undefined) {
     callback(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
   }
   username = username.trim().toLowerCase();
-  var validateUsername = UserLogic.validateUsername(username);
-  if (validateUsername != true) {
+  var validateUsername : any= UserLogic.validateUsername(username);
+  if (validateUsername !== true) {
     callback(validateUsername);
     return;
   } else {
-    const ul = new UserLogic();
-    ul.readFromDb({
+    const l: Logic = new Logic();
+    l.readFromDb({
       userName: {
         $regex: new RegExp(username, "i")
       }
-    }, function (value: any) {
+    }, "Users", function (value: any): any {
       if (value == null) {
         callback(Logic.responseMsgBuilder(ResponseEnum.Success, AvailableUsername));
         return;
@@ -264,4 +258,4 @@ function checkUsername(username: string, callback: any) {
 
 console.log(" ↳'/checkUsername' started");
 
-console.log("Done");
+console.log(" ✅");

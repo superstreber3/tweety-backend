@@ -1,4 +1,4 @@
-interface TweetInterface {
+interface ITweetInterface {
     creator: string;
     timeStamp: Date;
     content: string;
