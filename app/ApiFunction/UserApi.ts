@@ -24,7 +24,7 @@ const {
 } = require("nodejs-base64");
 // create a new express application instance
 const pwd: any = new securePassword();
-app.post("createUser", function (req: any, res: any): any {
+app.post("/createUser", function (req: any, res: any): any {
   if (req.body === undefined) {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
     return;

@@ -22,6 +22,6 @@ console.log("Starting Tweety API...");
 require("./ApiFunction/TweetApi");
 console.log("Starting Topic API...");
 require("./ApiFunction/TopicApi");
-app.listen(3000, function () {
+app.listen(3000, function (): any {
   console.log("API started succsesfully");
 });
