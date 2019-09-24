@@ -15,10 +15,10 @@ import {
   NoUserFound,
   NoUsername,
   NoUsernameOrMail,
-  SuccessfullyCreated,
-  UnexpectedError
+  SuccessfullyCreated
 } from "../Messages/UserLogicMessages";
 import { User } from "../Object/UserObj";
+import { UnexpectedError } from "../Messages/Messages";
 const {
   base64decode
 } = require("nodejs-base64");

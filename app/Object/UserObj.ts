@@ -1,4 +1,3 @@
-
 export class User implements IUserInterface {
     email: string;
     firstName: string;

@@ -7,7 +7,6 @@ export const NoUsername: string = "The Field username must be filled out";
 export const NoLastname: string = "The Field lastname must be filled out";
 export const NoFirstname: string = "The Field firstname must be filled out";
 export const NoPassword: string = "The Field password must be filled out";
-export const UnexpectedError: string = "There was an unexpected error";
 export const SuccessfullyCreated: string= "User successfully created!";
 export const NotAvailableUsername: string = "This Username is already taken!";
 export const AvailableUsername: string = "This Username is available";

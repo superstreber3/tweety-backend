@@ -1,15 +1,43 @@
 import { Logic } from "./Logic";
-
+import { ObjectId } from "bson";
+import { Tweet } from "../Object/TweetObj";
+var moment: any = require("moment");
 export class TweetLogic {
-    static createtime(time: any): any {
-        time = new Date(time);
-        if (time !== "Invalid Date") {
-            return time;
-        } else {
-            return false;
+    static createtime(time: string): any {
+        if (moment(time).isValid()) {
+            return moment(time, "YYYY-MM-DD").format("L");
         }
+        return false;
     }
-    static checkCreator(id: any): any {
+    static checkCreator(id: string, callack: Function): any {
         const l: Logic = new Logic;
+        l.readFromDb({ _id: new ObjectId(id) }, "Users", function (value: any): any {
+            if (value !== null) {
+                callack(true);
+                return;
+            }
+            callack(false);
+        });
+    }
+    static isTopicActive(topicId: string, callack: Function): any {
+        const l: Logic = new Logic;
+        l.readFromDb({ _id: "active" }, "Topics", function (value: any): any {
+            // tslint:disable-next-line: triple-equals
+            if (value.topic_id == topicId) {
+                callack(true);
+                return;
+            }
+            callack(false);
+        });
+    }
+    static contentCheck(content: string): boolean {
+        if (content.length >= 5 && content.length <= 255) { return true; }
+        return false;
+    }
+    writeTweetToDb(tweet: Tweet, callback: Function): any {
+        const l: Logic = new Logic;
+        l.writeUserToDb(tweet, "Tweets", function (): any {
+            callback();
+        });
     }
 }
