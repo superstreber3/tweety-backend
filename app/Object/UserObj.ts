@@ -1,5 +1,5 @@
 
-export class User implements userInterface {
+export class User implements IUserInterface {
     email: string;
     firstName: string;
     lastName: string;
@@ -11,7 +11,7 @@ export class User implements userInterface {
   this.lastName = lastName.trim();
   this.userName = userName.trim();
   this.email = email.trim().toLowerCase();
-  this.password = password
-  this.admin = admin
+  this.password = password;
+  this.admin = admin;
  }
 }

@@ -1,5 +1,5 @@
 
-import {ResponseEnum} from '../Enum/ResponseEnum'
+import {ResponseEnum} from "../Enum/ResponseEnum";
 export class ResponseObj{
     type: ResponseEnum;
     message: string;

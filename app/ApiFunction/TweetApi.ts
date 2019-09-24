@@ -14,7 +14,7 @@ import {
 } from "../Messages/TweetMessages";
 import { Tweet } from "../Object/TweetObj";
 import { TweetLogic } from "../Logic/TweetLogic";
-app.post("/post", function (req: any, res) {
+app.post("/post", function (req: any, res: any): any {
     var creator: string = req.body.creator;
     var timeStamp: string = req.body.timestamp;
     var content: string = req.body.content;
@@ -40,7 +40,7 @@ app.post("/post", function (req: any, res) {
         res.send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidTimeSpamp));
         return;
     }
-    var tweet: TweetInterface = new Tweet(
+    var tweet: ITweetInterface = new Tweet(
         creator,
         time,
         content,

@@ -49,7 +49,7 @@ app.post("createUser", function (req: any, res: any): any {
     res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
     return;
   }
-  var user: UserInterface = new User(
+  var user: IUserInterface = new User(
 
     req.body.firstname,
     req.body.lastname,

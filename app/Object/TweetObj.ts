@@ -1,4 +1,4 @@
-export class Tweet implements TweetInterface {
+export class Tweet implements ITweetInterface {
     creator: string;
     timeStamp: Date;
     content: string;
