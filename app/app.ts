@@ -14,6 +14,9 @@ var store: any = new MongoDBStore({
 });
 function myCors(req: any, res: any, nxt: any): any {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,POST");
+  res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Content-Type, Accept, Accept-Language, Origin, User-Agent, withCredentials");
+  res.header("Access-Control-Allow-Credentials", "true");
   nxt();
 }
 app.use(expressSession({
