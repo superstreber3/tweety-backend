@@ -140,7 +140,7 @@ app.get("/getUser", function (req: any, res: any): any {
 
 console.log(" ↳'/getUser' started");
 
-app.get("/login", function (req: any, res: any): any {
+app.post("/login", function (req: any, res: any): any {
   var username: string = req.query.username;
   var password: string = base64decode(req.query.password);
   var email: string = req.query.email;
