@@ -12,9 +12,15 @@ var store: any = new MongoDBStore({
   uri: "mongodb://localhost:27017/Tweety",
   collection: "sessions"
 });
-app.use(expressSession({store: store, secret: "qmX\*N{38o@xKi;h=Sas.MN-M*T;", saveUninitialized: true, resave: false, cookie: {
-  maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-},}));
+function myCors(req: any, res: any, nxt: any): any {
+  res.header("Access-Control-Allow-Origin", "*");
+  nxt();
+}
+app.use(expressSession({
+  store: store, secret: "qmX\*N{38o@xKi;h=Sas.MN-M*T;", saveUninitialized: true, resave: false, cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  },
+}));
 export default app;
 console.log("Starting User API...");
 require("./ApiFunction/UserApi");

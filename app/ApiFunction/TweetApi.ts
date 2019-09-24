@@ -19,6 +19,8 @@ import {
 import { Tweet } from "../Object/TweetObj";
 import { TweetLogic } from "../Logic/TweetLogic";
 import { UnexpectedError } from "../Messages/Messages";
+
+
 app.post("/post", function (req: any, res: any): any {
     if (req.body === undefined) {
         res.send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
@@ -81,5 +83,10 @@ app.post("/post", function (req: any, res: any): any {
 });
 
 console.log(" ↳'/post' started");
+
+app.get("/getPost", function (req: any, res: any): any {
+});
+
+console.log(" ↳'/getPost' started");
 
 console.log(" ✅");
