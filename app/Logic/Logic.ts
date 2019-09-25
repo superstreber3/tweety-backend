@@ -11,13 +11,23 @@ export class Logic {
         return new ResponseObj(type, message);
     }
     async writeUserToDb(value: any, collection: string, callback: any): Promise<any> {
-        DatabseLogic.writeToDB(value, collection, function () {
-             callback();
+        DatabseLogic.writeToDB(value, collection, function (): any {
+            callback();
         });
-   }
-   async readFromDb(param: Object, collection: string, callback: any): Promise<any> {
+    }
+    async UpdateToDb(searchValue: any, updateValue: any, collection: string, callback: any): Promise<any> {
+        DatabseLogic.UpdateDB(searchValue, updateValue, collection, function (): any {
+            callback();
+        });
+    }
+    async readFromDb(param: Object, collection: string, callback: any): Promise<any> {
         DatabseLogic.readFromDB(param, collection, function (value: any): any {
-             callback(value);
+            callback(value);
         });
-   }
+    }
+    async isAdmin(id: string): Promise<any> {
+        this.readFromDb({ _id: id }, "Users", function (value: any): any {
+            return value.admin;
+        });
+    }
 }
