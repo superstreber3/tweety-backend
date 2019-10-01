@@ -85,6 +85,12 @@ app.get("/getPostsOfToday", function (req: any, res: any): any {
     });
 });
 
+console.log(" ↳'/getPostsOfToday' started");
+
+app.get("/getPost", function (req: any, res: any): any {
+    res.status(400).send("NOT IMPLEMENTET");
+});
+
 console.log(" ↳'/getPost' started");
 
 console.log(" ✅");
