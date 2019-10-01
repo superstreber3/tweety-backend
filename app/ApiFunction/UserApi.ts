@@ -78,7 +78,13 @@ app.post("/createUser", function (req: any, res: any): any {
               user.password = hash.toString();
               const l: Logic = new Logic();
               l.writeUserToDb(user, "Users", function (): any {
-                res.send(Logic.responseMsgBuilder(ResponseEnum.Success, SuccessfullyCreated));
+                l.readFromDb({ email: user.email }, "Users", function (value: any): any {
+                  if (value !== undefined) {
+                    delete value.password;
+                  }
+                  req.session.user = value._id;
+                  res.send(value);
+                });
               });
             });
           }
@@ -175,10 +181,10 @@ app.post("/login", function (req: any, res: any): any {
     validateMail = UserLogic.validateEmail(email);
   }
   if (validateUsername !== true && username !== undefined) {
-    res.send(validateUsername);
+    res.status(400).send(validateUsername);
     return;
   } else if (validateMail !== true && email !== undefined) {
-    res.send(validateMail);
+    res.status(400).send(validateMail);
     return;
   } else {
     const ul: UserLogic = new UserLogic();
