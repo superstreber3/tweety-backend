@@ -9,8 +9,7 @@ export class TopicLogic {
         l.readFromDb({ _id: "active" }, "Topics", function (value: any): any {
             activeTopic = value.topic_id;
             l.readFromDb({ _id: activeTopic }, "Topics", function (value: any): any {
-                topicName = value.topic;
-                callback(topicName);
+                callback(value);
             });
         });
     }
