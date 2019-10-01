@@ -5,7 +5,7 @@ import { ResponseEnum } from "../Enum/ResponseEnum";
 import { NoTopic, TopicChangeSuccess, InvalidTopicId } from "../Messages/TopicMessages";
 import { InvalidPermissions } from "../Messages/Messages";
 
-app.get("/getTopic", function (req: any, res: any): any {
+app.get("/getActiveTopic", function (req: any, res: any): any {
     var tl: TopicLogic = new TopicLogic;
     tl.getTopic(function (value: string): any {
         res.send(value);
@@ -20,7 +20,7 @@ console.log(" ↳'/getTopic' started");
 app.post("/setTopic", function (req: any, res: any): any {
     var topic: string = req.body.topic;
     if (topic === undefined) {
-        res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoTopic));
+        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoTopic));
         return;
     }
     var tl: TopicLogic = new TopicLogic;
@@ -31,11 +31,11 @@ app.post("/setTopic", function (req: any, res: any): any {
                 res.send(Logic.responseMsgBuilder(ResponseEnum.Success, TopicChangeSuccess));
                 return;
             } else {
-                res.send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidTopicId));
+                res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidTopicId));
             }
         });
     } else {
-        res.send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidPermissions));
+        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidPermissions));
     }
 });
 

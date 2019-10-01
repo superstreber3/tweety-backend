@@ -26,27 +26,27 @@ const {
 const pwd: any = new securePassword();
 app.post("/createUser", function (req: any, res: any): any {
   if (req.body === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
     return;
   }
   if (req.body.firstname === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoFirstname));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoFirstname));
     return;
   }
   if (req.body.lastname === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoLastname));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoLastname));
     return;
   }
   if (req.body.username === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
   }
   if (req.body.email === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoMail));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoMail));
     return;
   }
   if (req.body.password === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
     return;
   }
   var user: IUserInterface = new User(
@@ -62,17 +62,17 @@ app.post("/createUser", function (req: any, res: any): any {
   if (validate === true) {
     checkUsername(user.userName, function (value: any): any {
       if (value.type === ResponseEnum.Error) {
-        res.send(value);
+        res.status(400).send(value);
         return;
       } else {
         checkEmail(user.email, function (value: any): any {
           if (value.type === ResponseEnum.Error) {
-            res.send(value);
+            res.status(400).send(value);
             return;
           } else {
             pwd.hash(Buffer.from(user.password), function (err: any, hash: any): any {
               if (err || hash == null) {
-                res.send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
+                res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
                 return;
               }
               user.password = hash.toString();
@@ -86,7 +86,7 @@ app.post("/createUser", function (req: any, res: any): any {
       }
     });
   } else {
-    res.send(validate);
+    res.status(400).send(validate);
   }
 });
 
@@ -95,16 +95,25 @@ console.log(" ↳'/createUser' started");
 app.get("/checkUsername", function (req: any, res: any): any {
   var username: string = req.query.username;
   checkUsername(username, function (value: any): any {
-    res.send(value);
+    if (value.type === ResponseEnum.Error) {
+      res.status(400).send(value);
+    } else {
+      res.send(value);
+    }
   });
 });
+
 
 console.log(" ↳'/checkUsername' started");
 
 app.get("/checkEmail", function (req: any, res: any): any {
   var email: string = req.query.email;
   checkEmail(email, function (value: any): any {
-    res.send(value);
+    if (value.type === ResponseEnum.Error) {
+      res.status(400).send(value);
+    } else {
+      res.send(value);
+    }
   });
 });
 
@@ -113,7 +122,7 @@ console.log(" ↳'/checkEmail' started");
 app.get("/getUser", function (req: any, res: any): any {
   var username: string = req.query.username;
   if (username === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
   }
   username = username.trim().toLowerCase();
@@ -129,7 +138,7 @@ app.get("/getUser", function (req: any, res: any): any {
       }
     }, "Users", function (value: any): any {
       if (value == null) {
-        res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
+        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
         return;
       }
       res.send(Logic.responseMsgBuilder(ResponseEnum.Success, value));
@@ -148,11 +157,11 @@ app.post("/login", function (req: any, res: any): any {
   var validateMail: any;
   var pwMail: any;
   if (username === undefined && email === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsernameOrMail));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsernameOrMail));
     return;
   }
   if (password === undefined) {
-    res.send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
+    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
     return;
   }
   if (username !== undefined) {
@@ -174,15 +183,15 @@ app.post("/login", function (req: any, res: any): any {
   } else {
     const ul: UserLogic = new UserLogic();
     ul.validatePasswordMatch(password, pwMail, function (value: any): any {
-              if (value.type === ResponseEnum.Success) {
-                   req.session.user = value.message._id;
-                   delete value.message.password;
-                   res.send(value);
-              } else {
-                   res.send(Logic.responseMsgBuilder(ResponseEnum.Error, "false"));
-              }
-              return;
-         });
+      if (value.type === ResponseEnum.Success) {
+        req.session.user = value.message._id;
+        delete value.message.password;
+        res.send(value);
+      } else {
+        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, "false"));
+      }
+      return;
+    });
   }
 });
 
@@ -227,15 +236,13 @@ function checkEmail(email: string, callback: any): any {
   }
 }
 
-console.log(" ↳'/checkEmail' started");
-
 function checkUsername(username: string, callback: any): any {
   if (username === undefined) {
     callback(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
   }
   username = username.trim().toLowerCase();
-  var validateUsername : any= UserLogic.validateUsername(username);
+  var validateUsername: any = UserLogic.validateUsername(username);
   if (validateUsername !== true) {
     callback(validateUsername);
     return;
@@ -255,7 +262,5 @@ function checkUsername(username: string, callback: any): any {
     });
   }
 }
-
-console.log(" ↳'/checkUsername' started");
 
 console.log(" ✅");
