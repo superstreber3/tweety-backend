@@ -83,7 +83,7 @@ app.post("/createUser", function (req: any, res: any): any {
                     delete value.password;
                   }
                   req.session.user = value._id;
-                  res.send(value);
+                  res.status(200).send(value);
                 });
               });
             });
@@ -104,7 +104,7 @@ app.get("/checkUsername", function (req: any, res: any): any {
     if (value.type === ResponseEnum.Error) {
       res.status(400).send(value);
     } else {
-      res.send(value);
+      res.status(200).send(value);
     }
   });
 });
@@ -118,7 +118,7 @@ app.get("/checkEmail", function (req: any, res: any): any {
     if (value.type === ResponseEnum.Error) {
       res.status(400).send(value);
     } else {
-      res.send(value);
+      res.status(200).send(value);
     }
   });
 });
@@ -134,7 +134,7 @@ app.get("/getUser", function (req: any, res: any): any {
   username = username.trim().toLowerCase();
   var validateUsername: any = UserLogic.validateUsername(username);
   if (validateUsername !== true) {
-    res.send(validateUsername);
+    res.status(200).send(validateUsername);
     return;
   } else {
     const l: Logic = new Logic();
@@ -147,7 +147,7 @@ app.get("/getUser", function (req: any, res: any): any {
         res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
         return;
       }
-      res.send(Logic.responseMsgBuilder(ResponseEnum.Success, value));
+      res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, value));
       return;
     });
   }
@@ -192,7 +192,7 @@ app.post("/login", function (req: any, res: any): any {
       if (value.type === ResponseEnum.Success) {
         req.session.user = value.message._id;
         delete value.message.password;
-        res.send(value);
+        res.status(200).send(value);
       } else {
         res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, "false"));
       }
@@ -206,9 +206,9 @@ console.log(" ↳'/login' started");
 app.get("/loggedin", function (req: any, res: any): any {
   if (req.session !== undefined) {
     if (req.session.user !== undefined) {
-      res.send(Logic.responseMsgBuilder(ResponseEnum.Success, req.session.user));
+      res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, req.session.user));
     } else {
-      res.send(false);
+      res.status(200).send(false);
     }
   }
 });

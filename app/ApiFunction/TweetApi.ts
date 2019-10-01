@@ -64,7 +64,7 @@ app.post("/post", function (req: any, res: any): any {
                     if (TweetLogic.contentCheck(tweet.content)) {
                         var tl: TweetLogic = new TweetLogic;
                         tl.writeTweetToDb(tweet, function (): any {
-                            res.send(Logic.responseMsgBuilder(ResponseEnum.Success, insertedTweet));
+                            res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, insertedTweet));
                         });
                     } else {
                         res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidContent));
