@@ -7,15 +7,27 @@ import { InvalidPermissions } from "../Messages/Messages";
 
 app.get("/getActiveTopic", function (req: any, res: any): any {
     var tl: TopicLogic = new TopicLogic;
-    tl.getTopic(function (value: string): any {
-        res.send(value);
+    tl.getActiveTopic(function (value: string): any {
+        res.status(200).send(value);
         return;
     });
-    // enter error Status Code
+    res.status(400);
     return;
 });
 
-console.log(" ↳'/getTopic' started");
+console.log(" ↳'/getActiveTopic' started");
+
+app.get("/getTopics", function (req: any, res: any): any {
+    var tl: TopicLogic = new TopicLogic;
+    tl.getTopics(function (value: string): any {
+        res.status(200).send(value);
+        return;
+    });
+    res.status(400);
+    return;
+});
+
+console.log(" ↳'/getTopics' started");
 
 app.post("/setTopic", function (req: any, res: any): any {
     var topic: string = req.body.topic;
@@ -28,7 +40,7 @@ app.post("/setTopic", function (req: any, res: any): any {
     if (l.isAdmin(req.session.user)) {
         tl.setTopic(topic, req.session.user, function (value: boolean): any {
             if (value) {
-                res.send(Logic.responseMsgBuilder(ResponseEnum.Success, TopicChangeSuccess));
+                res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, TopicChangeSuccess));
                 return;
             } else {
                 res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidTopicId));

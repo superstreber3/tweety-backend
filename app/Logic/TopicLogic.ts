@@ -2,7 +2,7 @@ import { Logic } from "./Logic";
 import { ObjectId } from "bson";
 
 export class TopicLogic {
-    async getTopic(callback: Function): Promise<any> {
+    async getActiveTopic(callback: Function): Promise<any> {
         const l: Logic = new Logic;
         var activeTopic: string;
         var topicName: string;
@@ -12,6 +12,15 @@ export class TopicLogic {
                 topicName = value.topic;
                 callback(topicName);
             });
+        });
+    }
+
+    async getTopics(callback: Function): Promise<any> {
+        const l: Logic = new Logic;
+        var activeTopic: string;
+        var topicName: string;
+        l.readAllFromDb("Topics", function (value: any): any {
+            callback(value);
         });
     }
 

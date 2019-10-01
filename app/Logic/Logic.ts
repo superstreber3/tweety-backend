@@ -25,6 +25,11 @@ export class Logic {
             callback(value);
         });
     }
+    async readAllFromDb(collection: string, callback: any): Promise<any> {
+        DatabseLogic.readAllFromDB(collection, function (value: any): any {
+            callback(value);
+        });
+    }
     async isAdmin(id: string): Promise<any> {
         this.readFromDb({ _id: id }, "Users", function (value: any): any {
             return value.admin;
