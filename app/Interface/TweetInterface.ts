@@ -1,6 +1,6 @@
 interface ITweetInterface {
     creator: string;
-    timeStamp: Date;
+    timeStamp: string;
     content: string;
     topic: string;
 }

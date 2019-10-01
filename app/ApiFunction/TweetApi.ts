@@ -19,6 +19,7 @@ import {
 import { Tweet } from "../Object/TweetObj";
 import { TweetLogic } from "../Logic/TweetLogic";
 import { UnexpectedError } from "../Messages/Messages";
+import { TopicLogic } from "../Logic/TopicLogic";
 
 
 app.post("/post", function (req: any, res: any): any {
@@ -26,58 +27,46 @@ app.post("/post", function (req: any, res: any): any {
         res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
         return;
     }
-    var creator: string = req.body.creator;
-    var timeStamp: string = req.body.timestamp;
     var content: string = req.body.content;
-    var topic: string = req.body.topic;
-    if (creator === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoCreaor));
-        return;
-    }
-    if (timeStamp === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoTimeStamp));
-        return;
-    }
     if (content === undefined) {
         res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoContent));
         return;
     }
-    if (topic === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoTopic));
-        return;
+    var today: Date = new Date();
+    var ddString: string;
+    var mmString: string;
+    var dd: number = today.getDate();
+    var mm: number = today.getMonth() + 1; // january is 0!
+    var yyyy: number = today.getFullYear();
+    if (dd < 10) {
+        ddString = "0" + dd;
     }
-    var time: any = TweetLogic.createtime(timeStamp);
-    if (time === false) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidTimeSpamp));
-        return;
+    ddString = dd.toString();
+    if (mm < 10) {
+        mmString = "0" + mm;
     }
-    var tweet: ITweetInterface = new Tweet(
-        creator,
-        time,
-        content,
-        topic
-    );
-    TweetLogic.checkCreator(tweet.creator, function (value: any): any {
-        if (value) {
-            TweetLogic.isTopicActive(tweet.topic, function (value: any): any {
-                if (value) {
-                    if (TweetLogic.contentCheck(tweet.content)) {
-                        var tl: TweetLogic = new TweetLogic;
-                        tl.writeTweetToDb(tweet, function (): any {
-                            res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, insertedTweet));
-                        });
-                    } else {
-                        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidContent));
-                        return;
-                    }
-                } else {
-                    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidTopic));
-                    return;
-                }
-            });
+    mmString = mm.toString();
+    var todayString: string = ddString + "/" + mmString + "/" + yyyy.toString();
+    var topicL: TopicLogic = new TopicLogic;
+    topicL.getActiveTopic(function (value: any): any {
+        if (req.session.user !== undefined) {
+            var tweet: ITweetInterface = new Tweet(
+                req.session.user.toString(),
+                todayString,
+                content,
+                value.topic
+            );
+            if (TweetLogic.contentCheck(tweet.content)) {
+                var tl: TweetLogic = new TweetLogic;
+                tl.writeTweetToDb(tweet, function (): any {
+                    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, insertedTweet));
+                });
+            } else {
+                res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidContent));
+                return;
+            }
         } else {
-            res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidCreator));
-            return;
+            res.status(401);
         }
     });
 });

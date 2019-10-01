@@ -3,27 +3,10 @@ import { ObjectId } from "bson";
 import { Tweet } from "../Object/TweetObj";
 var moment: any = require("moment");
 export class TweetLogic {
-    static createtime(time: string): any {
-        if (moment(time).isValid()) {
-            return moment(time, "YYYY-MM-DD").format("L");
-        }
-        return false;
-    }
     static checkCreator(id: string, callack: Function): any {
         const l: Logic = new Logic;
         l.readFromDb({ _id: new ObjectId(id) }, "Users", function (value: any): any {
             if (value !== null) {
-                callack(true);
-                return;
-            }
-            callack(false);
-        });
-    }
-    static isTopicActive(topicId: string, callack: Function): any {
-        const l: Logic = new Logic;
-        l.readFromDb({ _id: "active" }, "Topics", function (value: any): any {
-            // tslint:disable-next-line: triple-equals
-            if (value.topic_id == topicId) {
                 callack(true);
                 return;
             }
