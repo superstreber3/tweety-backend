@@ -30,9 +30,14 @@ export class Logic {
             callback(value);
         });
     }
-    async isAdmin(id: string): Promise<any> {
+    async readMultiFromDb(param: Object, collection: string, callback: any): Promise<any> {
+        DatabseLogic.readMultiFromDB(param, collection, function (value: any): any {
+            callback(value);
+        });
+    }
+    async isAdmin(id: string, callback: any): Promise<any> {
         this.readFromDb({ _id: id }, "Users", function (value: any): any {
-            return value.admin;
+            callback(value.admin);
         });
     }
 }

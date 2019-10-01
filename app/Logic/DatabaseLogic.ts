@@ -38,6 +38,18 @@ export class DatabseLogic {
 
     });
   }
+  static readMultiFromDB(search: Object, collectionString: string, callback: any): any {
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err: any, client: any): any {
+      assert.equal(null, err);
+      const collection: any = client.db().collection(collectionString);
+      collection.find(search).toArray(function(err: any, res: any): any {
+        if (err) { throw err; }
+        client.close();
+        callback(res);
+      });
+
+    });
+  }
   static UpdateDB(search: Object, replace: Object, collectionString: string, callback: any): any {
     MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err: any, client: any): any {
       assert.equal(null, err);

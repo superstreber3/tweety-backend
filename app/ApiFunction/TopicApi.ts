@@ -37,18 +37,20 @@ app.post("/setTopic", function (req: any, res: any): any {
     }
     var tl: TopicLogic = new TopicLogic;
     var l: Logic = new Logic;
-    if (l.isAdmin(req.session.user)) {
-        tl.setTopic(topic, req.session.user, function (value: boolean): any {
-            if (value) {
-                res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, TopicChangeSuccess));
-                return;
-            } else {
-                res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidTopicId));
-            }
-        });
-    } else {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidPermissions));
-    }
+    l.isAdmin(req.session.user, function (value: any): any {
+        if (value) {
+            tl.setTopic(topic, req.session.user, function (value: boolean): any {
+                if (value) {
+                    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, TopicChangeSuccess));
+                    return;
+                } else {
+                    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidTopicId));
+                }
+            });
+        } else {
+            res.status(401).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidPermissions));
+        }
+    });
 });
 
 console.log(" ↳'/setTopic' started");

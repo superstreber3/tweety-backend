@@ -23,4 +23,10 @@ export class TweetLogic {
             callback();
         });
     }
+    ReadAllofTodayFromDb(active: any, callback: Function): any {
+        const l: Logic = new Logic;
+        l.readMultiFromDb({topic: active}, "Tweets", function (value: any): any {
+            callback(value);
+        });
+    }
 }

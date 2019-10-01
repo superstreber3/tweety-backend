@@ -14,7 +14,8 @@ import {
     invalidCreator,
     invalidTopic,
     invalidContent,
-    insertedTweet
+    insertedTweet,
+    UserUnauthorized
 } from "../Messages/TweetMessages";
 import { Tweet } from "../Object/TweetObj";
 import { TweetLogic } from "../Logic/TweetLogic";
@@ -54,7 +55,7 @@ app.post("/post", function (req: any, res: any): any {
                 req.session.user.toString(),
                 todayString,
                 content,
-                value.topic
+                value._id.toString()
             );
             if (TweetLogic.contentCheck(tweet.content)) {
                 var tl: TweetLogic = new TweetLogic;
@@ -66,14 +67,22 @@ app.post("/post", function (req: any, res: any): any {
                 return;
             }
         } else {
-            res.status(401);
+            res.status(401).send(Logic.responseMsgBuilder(ResponseEnum.Error, UserUnauthorized));
         }
     });
 });
 
 console.log(" ↳'/post' started");
 
-app.get("/getPost", function (req: any, res: any): any {
+app.get("/getPostsOfToday", function (req: any, res: any): any {
+    var tl: TweetLogic = new TweetLogic();
+    var topicL: TopicLogic = new TopicLogic();
+    topicL.getActiveTopic(function (value: any): any {
+        tl.ReadAllofTodayFromDb(value._id.toString(), function (value: any): any {
+            res.status(200).send(value);
+        });
+
+    });
 });
 
 console.log(" ↳'/getPost' started");

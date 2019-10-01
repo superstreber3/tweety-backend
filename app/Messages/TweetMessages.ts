@@ -7,5 +7,6 @@ export const invalidCreator: string = "Could not found Creator";
 export const invalidTopic: string = "The Topic is invalid or not active";
 export const invalidContent: string = "The Content must be between 5 and 255 charakters long";
 export const insertedTweet: string = "Successfully inserted Tweet";
+export const UserUnauthorized: string = "User must be logged in!";
 
 
