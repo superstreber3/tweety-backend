@@ -11,7 +11,7 @@ app.get("/getActiveTopic", function (req: any, res: any): any {
         res.status(200).send(value);
         return;
     });
-    res.status(400);
+    res.status(200);
     return;
 });
 
@@ -23,7 +23,7 @@ app.get("/getTopics", function (req: any, res: any): any {
         res.status(200).send(value);
         return;
     });
-    res.status(400);
+    res.status(200);
     return;
 });
 
@@ -32,7 +32,7 @@ console.log(" ↳'/getTopics' started");
 app.post("/setTopic", function (req: any, res: any): any {
     var topic: string = req.body.topic;
     if (topic === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoTopic));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoTopic));
         return;
     }
     var tl: TopicLogic = new TopicLogic;
@@ -44,7 +44,7 @@ app.post("/setTopic", function (req: any, res: any): any {
                     res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, TopicChangeSuccess));
                     return;
                 } else {
-                    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidTopicId));
+                    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, InvalidTopicId));
                 }
             });
         } else {
@@ -58,7 +58,7 @@ console.log(" ↳'/setTopic' started");
 app.post("/addTopic", function (req: any, res: any): any {
     var name: any = req.body.name;
     if (name === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoName));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoName));
     }
 });
 

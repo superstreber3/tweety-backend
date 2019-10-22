@@ -28,12 +28,12 @@ import { ObjectID } from "bson";
 
 app.post("/post", function (req: any, res: any): any {
     if (req.body === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
         return;
     }
     var content: string = req.body.content;
     if (content === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoContent));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoContent));
         return;
     }
     var today: Date = new Date();
@@ -66,7 +66,7 @@ app.post("/post", function (req: any, res: any): any {
                     res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, insertedTweet));
                 });
             } else {
-                res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidContent));
+                res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, invalidContent));
                 return;
             }
         } else {
@@ -93,19 +93,19 @@ console.log(" ↳'/getPostsOfToday' started");
 app.get("/getPost", function (req: any, res: any): any {
     var id: any = req.query.id;
     if(id === undefined) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoId));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoId));
         return;
     }
     try {
         id = new ObjectID(id);
     } catch {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoIdFound));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoIdFound));
         return;
     }
     var tl: TweetLogic = new TweetLogic();
     tl.getTweet(id, function(value: any): any {
         if(value === null) {
-            res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoIdFound));
+            res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoIdFound));
             return;
         }
         res.status(200).send(value);
