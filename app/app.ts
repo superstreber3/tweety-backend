@@ -13,7 +13,7 @@ var store: any = new MongoDBStore({
   collection: "sessions"
 });
 function myCors(req: any, res: any, nxt: any): any {
-        res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+        res.header("Access-Control-Allow-Origin", "http://localhost:3001 ");
         res.header("Access-Control-Allow-Headers", "Origin, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-Response-Time, X-PINGOTHER, X-CSRF-Token,Authorization");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT ,DELETE");
         res.header("Access-Control-Allow-Credentials", true);

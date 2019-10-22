@@ -2,7 +2,7 @@ import app from "../app";
 import { TopicLogic } from "../Logic/TopicLogic";
 import { Logic } from "../Logic/Logic";
 import { ResponseEnum } from "../Enum/ResponseEnum";
-import { NoTopic, TopicChangeSuccess, InvalidTopicId, NoName } from "../Messages/TopicMessages";
+import { NoTopic, TopicChangeSuccess, InvalidTopicId, NoName, AddedTopic } from "../Messages/TopicMessages";
 import { InvalidPermissions } from "../Messages/Messages";
 
 app.get("/getActiveTopic", function (req: any, res: any): any {
@@ -59,7 +59,20 @@ app.post("/addTopic", function (req: any, res: any): any {
     var name: any = req.body.name;
     if (name === undefined) {
         res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoName));
+        return;
     }
+    var tl: TopicLogic = new TopicLogic;
+    tl.addTopic(name, function (value: any): any {
+        if (value === null) {
+            tl.getTopic(name, function (value: any): any {
+                res.status(200).send(value);
+            });
+            return;
+        } else {
+            res.status(200).send(value);
+            return;
+        }
+    });
 });
 
 console.log(" ↳'/addTopic' started");
