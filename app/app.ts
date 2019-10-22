@@ -21,9 +21,7 @@ function myCors(req: any, res: any, nxt: any): any {
 }
 app.use(myCors);
 app.use(expressSession({
-  store: store, secret: "qmX\*N{38o@xKi;h=Sas.MN-M*T;", saveUninitialized: true, resave: false, cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-  },
+  store: store, secret: "qmX\*N{38o@xKi;h=Sas.MN-M*T;", saveUninitialized: true, resave: false
 }));
 export default app;
 console.log("Starting User API...");
