@@ -16,8 +16,6 @@ export class TopicLogic {
 
     async getTopics(callback: Function): Promise<any> {
         const l: Logic = new Logic;
-        var activeTopic: string;
-        var topicName: string;
         l.readAllFromDb("Topics", function (value: any): any {
             callback(value);
         });

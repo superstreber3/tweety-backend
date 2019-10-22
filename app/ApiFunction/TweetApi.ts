@@ -15,12 +15,15 @@ import {
     invalidTopic,
     invalidContent,
     insertedTweet,
-    UserUnauthorized
+    UserUnauthorized,
+    NoId,
+    NoIdFound
 } from "../Messages/TweetMessages";
 import { Tweet } from "../Object/TweetObj";
 import { TweetLogic } from "../Logic/TweetLogic";
 import { UnexpectedError } from "../Messages/Messages";
 import { TopicLogic } from "../Logic/TopicLogic";
+import { ObjectID } from "bson";
 
 
 app.post("/post", function (req: any, res: any): any {
@@ -88,7 +91,26 @@ app.get("/getPostsOfToday", function (req: any, res: any): any {
 console.log(" ↳'/getPostsOfToday' started");
 
 app.get("/getPost", function (req: any, res: any): any {
-    res.status(400).send("NOT IMPLEMENTET");
+    var id: any = req.query.id;
+    if(id === undefined) {
+        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoId));
+        return;
+    }
+    try {
+        id = new ObjectID(id);
+    } catch {
+        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoIdFound));
+        return;
+    }
+    var tl: TweetLogic = new TweetLogic();
+    tl.getTweet(id, function(value: any): any {
+        if(value === null) {
+            res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoIdFound));
+            return;
+        }
+        res.status(200).send(value);
+        return;
+    });
 });
 
 console.log(" ↳'/getPost' started");

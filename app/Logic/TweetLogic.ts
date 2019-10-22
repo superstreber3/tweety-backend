@@ -29,4 +29,10 @@ export class TweetLogic {
             callback(value);
         });
     }
+    async getTweet(id:any, callback: Function): Promise<any> {
+        const l: Logic = new Logic;
+        l.readFromDb({_id: new ObjectId(id)}, "Tweets", function (value: any): any {
+            callback(value);
+        });
+    }
 }
