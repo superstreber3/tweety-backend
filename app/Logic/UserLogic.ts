@@ -57,7 +57,6 @@ export class UserLogic {
                     },
                }, "Users", function (valueU: any): any {
                     if (valueU == null) {
-                         console.log(1);
                          callback(Logic.responseMsgBuilder(ResponseEnum.Error, "false"));
                     } else {
                          UserLogic.verfiyPw(valueU.password, pw, function (value2U: any): any {
@@ -94,7 +93,6 @@ export class UserLogic {
                          callback(false);
                          break;
                     case securePassword.INVALID:
-                         console.log(pw);
                          callback(false);
                          break;
                     case securePassword.VALID:
