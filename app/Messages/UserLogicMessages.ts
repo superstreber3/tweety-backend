@@ -3,6 +3,7 @@ export const ShortUsername: string = "The Username needs to contain at least 5 C
 export const InvalidUsername: string = "The Username is only allowed to have alphanumeric charakters(a-z and 0-9)";
 export const InvalidPassword: string = "The Password must be at least 8 characters long, containing a lowercase, uppercase and a number";
 export const NoMail: string = "The Field email must be filled out";
+export const NoId: string = "The Field id must be filled out";
 export const NoUsername: string = "The Field username must be filled out";
 export const NoLastname: string = "The Field lastname must be filled out";
 export const NoFirstname: string = "The Field firstname must be filled out";

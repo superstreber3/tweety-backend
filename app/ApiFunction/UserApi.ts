@@ -15,10 +15,12 @@ import {
   NoUserFound,
   NoUsername,
   NoUsernameOrMail,
-  SuccessfullyCreated
+  SuccessfullyCreated,
+  NoId
 } from "../Messages/UserLogicMessages";
 import { User } from "../Object/UserObj";
 import { UnexpectedError } from "../Messages/Messages";
+import { ObjectID } from "bson";
 const {
   base64decode
 } = require("nodejs-base64");
@@ -26,27 +28,27 @@ const {
 const pwd: any = new securePassword();
 app.post("/createUser", function (req: any, res: any): any {
   if (req.body === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
     return;
   }
   if (req.body.firstname === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoFirstname));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoFirstname));
     return;
   }
   if (req.body.lastname === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoLastname));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoLastname));
     return;
   }
   if (req.body.username === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
   }
   if (req.body.email === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoMail));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoMail));
     return;
   }
   if (req.body.password === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
     return;
   }
   var user: IUserInterface = new User(
@@ -62,17 +64,17 @@ app.post("/createUser", function (req: any, res: any): any {
   if (validate === true) {
     checkUsername(user.userName, function (value: any): any {
       if (value.type === ResponseEnum.Error) {
-        res.status(400).send(value);
+        res.status(200).send(value);
         return;
       } else {
         checkEmail(user.email, function (value: any): any {
           if (value.type === ResponseEnum.Error) {
-            res.status(400).send(value);
+            res.status(200).send(value);
             return;
           } else {
             pwd.hash(Buffer.from(user.password), function (err: any, hash: any): any {
               if (err || hash == null) {
-                res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
+                res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, UnexpectedError));
                 return;
               }
               user.password = hash.toString();
@@ -81,9 +83,9 @@ app.post("/createUser", function (req: any, res: any): any {
                 l.readFromDb({ email: user.email }, "Users", function (value: any): any {
                   if (value !== undefined) {
                     if (value.password !== undefined) {
-                    delete value.password;
+                      delete value.password;
+                    }
                   }
-                }
                   req.session.user = value._id;
                   res.status(200).send(value);
                 });
@@ -94,7 +96,7 @@ app.post("/createUser", function (req: any, res: any): any {
       }
     });
   } else {
-    res.status(400).send(validate);
+    res.status(200).send(validate);
   }
 });
 
@@ -104,7 +106,7 @@ app.get("/checkUsername", function (req: any, res: any): any {
   var username: string = req.query.username;
   checkUsername(username, function (value: any): any {
     if (value.type === ResponseEnum.Error) {
-      res.status(400).send(value);
+      res.status(200).send(value);
     } else {
       res.status(200).send(value);
     }
@@ -118,7 +120,7 @@ app.get("/checkEmail", function (req: any, res: any): any {
   var email: string = req.query.email;
   checkEmail(email, function (value: any): any {
     if (value.type === ResponseEnum.Error) {
-      res.status(400).send(value);
+      res.status(200).send(value);
     } else {
       res.status(200).send(value);
     }
@@ -130,7 +132,7 @@ console.log(" ↳'/checkEmail' started");
 app.get("/getUser", function (req: any, res: any): any {
   var username: string = req.query.username;
   if (username === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsername));
     return;
   }
   username = username.trim().toLowerCase();
@@ -146,16 +148,43 @@ app.get("/getUser", function (req: any, res: any): any {
       }
     }, "Users", function (value: any): any {
       if (value == null) {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
         return;
       }
-      res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, value));
+      res.status(200).send(value);
       return;
     });
   }
 });
 
 console.log(" ↳'/getUser' started");
+
+app.get("/getUserWithId", function (req: any, res: any): any {
+  var id: any = req.query.id;
+  if (id === undefined) {
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoId));
+    return;
+  }
+  try {
+    id = new ObjectID(id);
+    const l: Logic = new Logic();
+    l.readFromDb({
+      _id: id
+    }, "Users", function (value: any): any {
+      if (value == null) {
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
+        return;
+      }
+      res.status(200).send(value);
+      return;
+    });
+  } catch {
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
+    return;
+  }
+});
+
+console.log(" ↳'/getUserWithId' started");
 
 app.post("/login", function (req: any, res: any): any {
   var username: string = req.body.username;
@@ -165,11 +194,11 @@ app.post("/login", function (req: any, res: any): any {
   var validateMail: any;
   var pwMail: any;
   if (username === undefined && email === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsernameOrMail));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUsernameOrMail));
     return;
   }
   if (password === undefined) {
-    res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
+    res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoPassword));
     return;
   }
   if (username !== undefined) {
@@ -183,10 +212,10 @@ app.post("/login", function (req: any, res: any): any {
     validateMail = UserLogic.validateEmail(email);
   }
   if (validateUsername !== true && username !== undefined) {
-    res.status(400).send(validateUsername);
+    res.status(200).send(validateUsername);
     return;
   } else if (validateMail !== true && email !== undefined) {
-    res.status(400).send(validateMail);
+    res.status(200).send(validateMail);
     return;
   } else {
     const ul: UserLogic = new UserLogic();
@@ -196,7 +225,7 @@ app.post("/login", function (req: any, res: any): any {
         delete value.message.password;
         res.status(200).send(value);
       } else {
-        res.status(400).send(Logic.responseMsgBuilder(ResponseEnum.Error, "false"));
+        res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, "false"));
       }
       return;
     });
