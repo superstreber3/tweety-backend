@@ -247,7 +247,7 @@ app.get("/loggedin", function (req: any, res: any): any {
 
 console.log(" ↳'/login' started");
 
-app.get("/logout", function (req: any, res: any): any {
+app.post("/logout", function (req: any, res: any): any {
   req.session.destroy();
   res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, Loggedout));
 });
