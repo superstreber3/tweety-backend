@@ -16,6 +16,5 @@ export const AvailableEmail: string = "This Email is available";
 export const NoUserFound: string = "User could not be found";
 export const NoUsernameOrMail: string = "The Field Username or Email must be filled out";
 export const WrongHash: string = "The Field Username or Email must be filled out";
-
-
+export const Loggedout: string = "Logged out!";
 

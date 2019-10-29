@@ -16,7 +16,8 @@ import {
   NoUsername,
   NoUsernameOrMail,
   SuccessfullyCreated,
-  NoId
+  NoId,
+  Loggedout
 } from "../Messages/UserLogicMessages";
 import { User } from "../Object/UserObj";
 import { UnexpectedError } from "../Messages/Messages";
@@ -244,7 +245,14 @@ app.get("/loggedin", function (req: any, res: any): any {
   }
 });
 
-console.log(" ↳'/loggedin' started");
+console.log(" ↳'/login' started");
+
+app.get("/logout", function (req: any, res: any): any {
+  req.session.destroy();
+  res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Success, Loggedout));
+});
+
+console.log(" ↳'/logout' started");
 
 function checkEmail(email: string, callback: any): any {
   if (email === undefined) {
