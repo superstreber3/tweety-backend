@@ -176,6 +176,7 @@ app.get("/getUserWithId", function (req: any, res: any): any {
         res.status(200).send(Logic.responseMsgBuilder(ResponseEnum.Error, NoUserFound));
         return;
       }
+      delete value.password;
       res.status(200).send(value);
       return;
     });
@@ -245,7 +246,7 @@ app.get("/loggedin", function (req: any, res: any): any {
   }
 });
 
-console.log(" ↳'/login' started");
+console.log(" ↳'/loggedin' started");
 
 app.post("/logout", function (req: any, res: any): any {
   req.session.destroy();
